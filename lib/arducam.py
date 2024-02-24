@@ -458,8 +458,9 @@ class Camera:
 			sleep_ms(2)
 
 	def _get_bit(self, addr, bit):
-		data = self._read_reg(addr);
-		return int.from_bytes(data, 1) & bit;
+		data = self._read_reg(addr)
+		return int.from_bytes(data, 1) & bit
+
 
 if __name__ == "__main__":
 	from machine import Timer
