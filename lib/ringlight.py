@@ -10,12 +10,12 @@ class NeoPx:
     def on(self):
         for lights in range(0, 12): 
             self.np[lights] = (255, 255, 255)
-            led.np.write()
+            self.np.write()
 
     def off(self):
          for lights in range(0, 12): 
             self.np[lights] = (0, 0, 0)
-            led.np.write()
+            self.np.write()
 
 
 if __name__ == "__main__":
