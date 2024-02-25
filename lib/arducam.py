@@ -221,7 +221,9 @@ class Camera:
 		self._wait_idle()
 		self._write_reg(self.CAM_REG_DEBUG_DEVICE_ADDRESS, self.deviceAddress)
 		self._wait_idle()
-
+		self.spi = SPI(1, baudrate=8000000, polarity=0, phase=0, bits=8, firstbit=0, sck=Pin(36), mosi=Pin(35), miso=Pin(37))
+		self.cs = Pin(34, Pin.OUT, value=1)
+		
 		self.run_start_up_config = True
 
 		# Set default format and resolution
@@ -462,33 +464,39 @@ class Camera:
 		return int.from_bytes(data, 1) & bit
 
 
-if __name__ == "__main__":
-	from machine import Timer
-	import os
-	from time import ticks_ms
-	
-	spi = SPI(1, baudrate=8000000, polarity=0, phase=0, bits=8, firstbit=0, sck=Pin(36), mosi=Pin(35), miso=Pin(37))
-	cs = Pin(34, Pin.OUT, value=1)
+	def capture_images(self):
+		from machine import Timer
+		import os
+		from time import ticks_ms
+		
+		
 
-	cam = Camera(spi, cs)
-	
-	cam.resolution = '320x240'
-	#cam.resolution = '640x480'
-	cam.set_brightness_level(cam.BRIGHTNESS_PLUS_4)
-	cam.set_contrast(cam.CONTRAST_MINUS_3)
-	cam.set_filter(cam.SPECIAL_NORMAL)
-	t = 0
-	
-	for file in os.listdir("images"):
-		print("Removing file images/" + str(file))
-		os.remove("images/" + file)
-	
-	for i in range(5):
+		cam = Camera(spi, cs)
+			
+		cam.resolution = '320x240'
+		#cam.resolution = '640x480'
+		cam.set_brightness_level(cam.BRIGHTNESS_PLUS_4)
+		cam.set_contrast(cam.CONTRAST_MINUS_3)
+		cam.set_filter(cam.SPECIAL_NORMAL)
+		t = 0
+			
+		existing_files = os.listdir("images")
+		existing_numbers = [int(file.split('.')[0].split('image')[1]) for file in existing_files if file.startswith("image")]
+		max_existing_number = max(existing_numbers) if existing_numbers else -0
+			
+		# Capture 1 more image without overwriting existing ones
+		image_number = max_existing_number + 1 if max_existing_number != -1 else 0
+		image_path = f'images/image{image_number}.jpg'
 		cam.capture_jpg()
-		#sleep_ms(50)
 		t1 = ticks_ms()
-
-		cam.saveJPG(f'images/image{i}.jpg')
-
+		cam.saveJPG(image_path)
+		
+			
 		t += ticks_ms()-t1
-	print("Total time:" + str(t))
+		print("Total time:" + str(t))
+	
+if __name__ == "__main__":
+    spi = SPI(1, baudrate=8000000, polarity=0, phase=0, bits=8, firstbit=0, sck=Pin(36), mosi=Pin(35), miso=Pin(37))
+    cs = Pin(34, Pin.OUT, value=1)
+    cam = Camera(spi, cs)
+    cam.capture_images()
