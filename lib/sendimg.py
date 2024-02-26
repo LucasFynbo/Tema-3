@@ -1,13 +1,13 @@
 import socket
 
 class ImgFileSender:
-    def __init__(self, filePath, serverIP, serverPort):
-        self.filePath = filePath
+    def __init__(self, serverIP, serverPort):
         self.serverAddress = (serverIP, serverPort)
         # self.serverAddress = f"{serverIP}:{serverPort}"
 
-    def send(self):
-        with open(self.filePath, 'rb') as f:
+    def send(self, filePath):
+        filePath = filePath
+        with open(filePath, 'rb') as f:
             jpgData = f.read()
             
         request = (
@@ -36,5 +36,5 @@ if __name__ == "__main__":
     serverIP = '192.168.99.145'
     serverPort = 8000
 
-    jpgSender = ImgFileSender(filePath, serverIP, serverPort)
-    jpgSender.send()
+    jpgSender = ImgFileSender(serverIP, serverPort)
+    jpgSender.send(filePath)
