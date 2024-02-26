@@ -19,7 +19,6 @@ class VerticalFarming:
     def schedule_capture(self, interval,):
         _thread.start_new_thread(self.capture_thread, (interval,))
         
-
     def capture_thread(self, interval):
         while True:
             currentTime = time.time() # Gets current time
