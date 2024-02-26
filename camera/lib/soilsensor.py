@@ -47,13 +47,14 @@ class SoilSensor:
 		sleep_ms(4) # Delay to allow sample to complete
 		result = self.bus.readfrom(self.addr, 2)
 		return int.from_bytes(result, 'big')
-
-
+	
+            
 if __name__ == "__main__":
 	sens = SoilSensor(I2C(1, scl=Pin(9), sda=Pin(8)))
 	while True:
 		t=0
 		#t = sens.get_temp()
 		h = sens.get_hum()
-		print(f"Temp, {t}, Hum, {h}")
+		
+		print(f"Hum, {h}")
 		sleep_ms(500)
