@@ -490,6 +490,8 @@ class Camera:
 		cam.capture_jpg()
 		t1 = ticks_ms()
 		cam.saveJPG(image_path)
+
+		return image_path
 		
 			
 		t += ticks_ms()-t1
