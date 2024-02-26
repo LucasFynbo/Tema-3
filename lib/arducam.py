@@ -210,10 +210,10 @@ class Camera:
 ##################### Callable FUNCTIONS #####################
 
 ########### CORE PHOTO FUNCTIONS ###########
-	def __init__(self, spi_bus, cs, skip_sleep=False, debug_information=False):
-		self.cs = cs
-		self.spi_bus = spi_bus
-		self.camera_idx = "5MP"
+	def __init__(self, skip_sleep=False, debug_information=False):
+		self.spi_bus = SPI(1, baudrate=8000000, polarity=0, phase=0, bits=8, firstbit=0, sck=Pin(36), mosi=Pin(35), miso=Pin(37))
+		self.cs = Pin(34, Pin.OUT, value=1)
+		self.camera_idx = "3MP"
 
 		self._write_reg(self.CAM_REG_SENSOR_RESET, self.CAM_SENSOR_RESET_ENABLE) # Reset camera
 		self._wait_idle()
@@ -221,9 +221,8 @@ class Camera:
 		self._wait_idle()
 		self._write_reg(self.CAM_REG_DEBUG_DEVICE_ADDRESS, self.deviceAddress)
 		self._wait_idle()
-		self.spi = SPI(1, baudrate=8000000, polarity=0, phase=0, bits=8, firstbit=0, sck=Pin(36), mosi=Pin(35), miso=Pin(37))
-		self.cs = Pin(34, Pin.OUT, value=1)
-		
+
+
 		self.run_start_up_config = True
 
 		# Set default format and resolution
@@ -471,7 +470,7 @@ class Camera:
 		
 		
 
-		cam = Camera(spi, cs)
+		cam = Camera()
 			
 		cam.resolution = '320x240'
 		#cam.resolution = '640x480'
@@ -496,7 +495,5 @@ class Camera:
 		print("Total time:" + str(t))
 	
 if __name__ == "__main__":
-    spi = SPI(1, baudrate=8000000, polarity=0, phase=0, bits=8, firstbit=0, sck=Pin(36), mosi=Pin(35), miso=Pin(37))
-    cs = Pin(34, Pin.OUT, value=1)
-    cam = Camera(spi, cs)
+    cam = Camera()
     cam.capture_images()
