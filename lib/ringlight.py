@@ -9,7 +9,7 @@ class NeoPx:
 
     def on(self):
         for lights in range(0, 12): 
-            self.np[lights] = (255, 255, 255)
+            self.np[lights] = (255, 90, 255)
             self.np.write()
 
     def off(self):
