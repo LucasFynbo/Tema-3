@@ -6,13 +6,11 @@ class Pump:
         self.pin= Pin(6, Pin.OUT)
         self.pwm =PWM(self.pin, freq=200, duty_u16=0)
 
-    def duty(self,procent):
-        self.pwm.duty_u16(int(65535/100*procent))
+    def on(self):
+        self.pwm.duty_u16(65535)
+        sleep(6)
+        self.pwm.duty_u16(0)
         
 if __name__ == "__main__":
     p = Pump()
-    while True:
-        p.duty(100)
-        sleep(6)
-        p.duty(0)
-        sleep(20)
+    p.on()
