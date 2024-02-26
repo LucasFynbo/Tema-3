@@ -3,9 +3,9 @@ from Tema_3.lib.soilsensor import SoilSensor   # SoilSensor driver
 from Tema_3.lib.ringlight import NeoPx         # NeoPixel module
 from Tema_3.lib.sendimg import ImgFileSender   # Arducam send image module
 from Tema_3.lib.pump import Pump               # driver for pump
-import _thread                        # Threading module
+from Tema_3.lib.wifi import WifiConnector      # Wifi Connector
+import _thread                                 # Threading module
 import time
-
 
 class VerticalFarming:
     def __init__(self):
@@ -20,7 +20,9 @@ class VerticalFarming:
     
     def schedule_capture(self, interval,):
         _thread.start_new_thread(self.capture_thread, (interval,))
-        
+
+    def wifiConnection(self):
+        self.wifi.connect()
 
     def capture_thread(self, interval):
         while True:
@@ -40,11 +42,9 @@ class VerticalFarming:
             self.pump.on()
             time.sleep(1)
 
-        
-
-
 if __name__ == "__main__":
     vf = VerticalFarming()
+    vf.wifiConnection()
     vf.schedule_capture(24 * 60 * 60)
     while True:
         vf.np.on()
