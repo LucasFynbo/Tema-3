@@ -302,9 +302,9 @@ class Camera:
 		last_byte = 0x00
 		
 		while not endmarker_recieved:
-			self.cs.off()
+			self.cs.value(0)
 			self.spi_bus.readinto(self.image_buffer, self.BURST_FIFO_READ)
-			self.cs.on()
+			self.cs.value(1)
 			
 			self.image_buffer[0] = last_byte
 			last_byte = self.image_buffer[-1]
@@ -431,19 +431,19 @@ class Camera:
 ##################### INTERNAL FUNCTIONS - LOW LEVEL #####################
 
 	def _bus_write(self, addr, val):
-		self.cs.off()
+		self.cs.value(0)
 		self.spi_bus.write(bytes([addr]))
 		self.spi_bus.write(bytes([val])) # FixMe only works with single bytes
-		self.cs.on()
+		self.cs.value(1)
 		sleep_ms(1) # From the Arducam Library
 		return 1
 
 	def _bus_read(self, addr):
-		self.cs.off()
+		self.cs.value(0)
 		self.spi_bus.write(bytes([addr]))
 		data = self.spi_bus.read(1) # Only read second set of data
 		data = self.spi_bus.read(1)
-		self.cs.on()
+		self.cs.value(1)
 		return data
 
 	def _write_reg(self, addr, val):
@@ -490,8 +490,6 @@ class Camera:
 		cam.capture_jpg()
 		t1 = ticks_ms()
 		cam.saveJPG(image_path)
-
-		return image_path
 		
 			
 		t += ticks_ms()-t1
