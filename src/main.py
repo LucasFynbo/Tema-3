@@ -34,17 +34,19 @@ class VerticalFarming:
 
     def on_pump_if_dry(self):
         hum = self.soilsensor.get_hum()
-        self.pump.on()
+        print(f"Soil moisture: {hum}")
+        
+        if hum < 800:
+            self.pump.on()
+            time.sleep(1)
+
         
 
 
 if __name__ == "__main__":
     vf = VerticalFarming()
-    soilsensor = SoilSensor()
     vf.schedule_capture(24 * 60 * 60)
     while True:
-        hum = soilsensor.get_hum()
-        print(f"Soil moisture: {hum}")
-        vf.on_pump_if_dry()
         vf.np.on()
+        vf.on_pump_if_dry()
         time.sleep(1)
