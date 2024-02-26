@@ -34,7 +34,7 @@ class file_recv():
                 with conn:
                     print(f"connected by {addr}")
                     self.recv_file(conn)
-                    print("fil modtaget {filename}")
+                    print("fil modtaget")
 
 def main():
     host = '0.0.0.0'
