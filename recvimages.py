@@ -1,26 +1,26 @@
 import socket
 import os
 
-class fileRecv():
-    def __init__(self, host, port, uploadDirectory):
-        self. host = host
+class file_recv():
+    def __init__(self, host, port, upload_directory):
+        self.host = host
         self.port = port
-        self.uploadDirectory = uploadDirectory
+        self.upload_directory = upload_directory
         self.counter = 1
 
-    def recvFile(self, conn):
-        fileData = b''
+    def recv_file(self, conn):
+        file_data = b''
         while True: 
             chunk = conn.recv(4096)
             if not chunk:
                 break
-            fileData += chunk
+            file_data += chunk
 
-        filename = f'recvImage_{self.counter}.jpg'
+        filename = f'recv_image_{self.counter}.jpg'
         self.counter += 1
 
-        with open(os.path.join(self.uploadDirectory, filename), 'wb') as f:
-            f.write(fileData)
+        with open(os.path.join(self.upload_directory, filename), 'wb') as f:
+            f.write(file_data)
 
     def start(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -33,15 +33,15 @@ class fileRecv():
                 conn, addr = s.accept()
                 with conn:
                     print(f"connected by {addr}")
-                    self.recvFile(conn)
+                    self.recv_file(conn)
                     print("fil modtaget {filename}")
 
 def main():
     host = '0.0.0.0'
     port = 8000
-    uploadDirectory = r'c:\Users\Mads\Desktop'
+    upload_directory = r'c:\Users\Mads\Desktop'
 
-    receiver = fileRecv(host, port, uploadDirectory)
+    receiver = file_recv(host, port, upload_directory)
     receiver.start()
 
 if __name__=="__main__":
