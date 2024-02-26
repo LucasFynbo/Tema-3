@@ -20,11 +20,14 @@ class SoilSensor:
 	SEESAW_GPIO_BULK_TOGGLE = 0x07
 	#SEESAW_GPIO_DIRSET_BULK  # this->write(SEESAW_GPIO_BASE, SEESAW_GPIO_DIRSET_BULK, cmd, 4);
 	
-	def __init__(self, i2c_bus, address=0x36):
-		self.bus = i2c_bus
+	def __init__(self, i2c=None, address=0x36):
+		if not i2c:
+			self.bus = I2C(1, scl=Pin(9), sda=Pin(8))
+		else:
+			self.bus = i2c
 		self.addr = address
 		self.led_pin = (1<<27).to_bytes(4, 'big')
-		if address not in i2c_bus.scan():
+		if address not in self.bus.scan():
 			print("Soilmoisture sensor not found!")
 		self.temp_cmd = bytes([self.SEESAW_STATUS_BASE, self.SEESAW_STATUS_TEMP])
 		self.hum_cmd = bytes([self.SEESAW_TOUCH_BASE, self.SEESAW_TOUCH_CHANNEL_OFFSET])
