@@ -1,3 +1,9 @@
+# This file is executed on every boot (including wake-boot from deepsleep)
+import esp
+esp.osdebug(None)
+#import webrepl
+#webrepl.start()
+
 from Tema_3.lib.arducam import Camera          # Arducam driver
 from Tema_3.lib.soilsensor import SoilSensor   # SoilSensor driver
 from Tema_3.lib.ringlight import NeoPx         # NeoPixel module
@@ -64,4 +70,3 @@ if __name__ == "__main__":
     vf.schedule_capture(60*60*4)
     vf.light_thread(60*60*8)
     vf.pump_thread(60*10)
-    

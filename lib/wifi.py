@@ -3,10 +3,10 @@ import sys
 import time
 
 class WifiConnector:
-    def __init__(self, ssid, password, hostname=None):
+    def __init__(self, ssid, password):
         self.ssid = ssid
         self.password = password
-        self.hostname = hostname
+        self.hostname = None
         self.sta_if = network.WLAN(network.STA_IF)
     
     def connect(self):
