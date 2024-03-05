@@ -9,12 +9,15 @@ class file_recv():
         self.counter = 1
 
     def recv_file(self, conn):
+        conn.recv(75) # For at undgå at HTTP headers bliver en del af billedet, skipper vi de første 75 recieved bits
         file_data = b''
         while True: 
             chunk = conn.recv(4096)
+
             if not chunk:
                 break
             file_data += chunk
+            print(len(file_data))
 
         filename = f'recv_image_{self.counter}.jpg'
         self.counter += 1
@@ -37,9 +40,9 @@ class file_recv():
                     print("fil modtaget {filename}")
 
 def main():
-    host = '0.0.0.0'
+    host = '172.20.10.2'
     port = 8000
-    upload_directory = r'c:\Users\Mads\Desktop'
+    upload_directory = r'C:\script\images'
 
     receiver = file_recv(host, port, upload_directory)
     receiver.start()
