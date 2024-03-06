@@ -3,7 +3,7 @@ from Tema_3.lib.soilsensor import SoilSensor   # SoilSensor driver
 from Tema_3.lib.ringlight import NeoPx         # NeoPixel module
 from Tema_3.lib.sendimg import ImgFileSender   # Arducam send image module
 from Tema_3.lib.pump import Pump               # driver for pump
-#from Tema_3.lib.wifi import WifiConnector      # Wifi Connector
+from Tema_3.lib.wifi import WifiConnector      # Wifi Connector
 import _thread                                 # Threading module
 import time
 
@@ -14,18 +14,14 @@ class VerticalFarming:
         self.soilsensor = SoilSensor()
         self.FileSend = ImgFileSender("192.168.99.145", 8000)
         self.pump = Pump()
-        #self.wifi = WifiConnector("ITLAB", "MaaGoddt*7913")
+
+        print(f"IP: {WifiConnector("ITLAB", "MaaGodt*7913")}")
+
         self.np.off()
         self.led_on = 0
     
-    def sendImages(self):
-        self.imgFileSender = ImgFileSender() 
-    
     def schedule_capture(self, interval):
         _thread.start_new_thread(self.capture_thread,(interval,))
-
-    def wifiConnection(self):
-        self.wifi.connect()
 
     def capture_thread(self, interval):
         while True:
@@ -35,22 +31,15 @@ class VerticalFarming:
             if remainTime > 0: #sleep for the remaining time                    
                 time.sleep(remainTime)
                 if self.led_on:
-                    self.cam.capture_images()
+                    image_path = self.cam.capture_images()
                 else:
                     self.np.on()
-                    self.cam.capture_images()
+                    image_path = self.cam.capture_images()
                     self.np.off()
                 print("took picture")
+                self.FileSend.send(image_path)
             else:
                 time.sleep(1)
-
-    def on_pump_if_dry(self, interval):
-        while True:
-            hum = self.soilsensor.get_hum()
-            print(f"Soil moisture: {hum}")
-            if hum < 750:
-                self.pump.on()
-            time.sleep(interval)
             
     def light_thread(self, interval):
         _thread.start_new_thread(self.manage_light,(interval,))
@@ -63,6 +52,14 @@ class VerticalFarming:
             vf.np.on()
             time.sleep(interval)
             vf.np.off()
+            time.sleep(interval)
+
+    def on_pump_if_dry(self, interval):
+        while True:
+            hum = self.soilsensor.get_hum()
+            print(f"Soil moisture: {hum}")
+            if hum < 750:
+                self.pump.on()
             time.sleep(interval)
 
 if __name__ == "__main__":

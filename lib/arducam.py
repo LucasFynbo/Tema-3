@@ -467,6 +467,7 @@ class Camera:
 			
         t += ticks_ms()-t1
         print("Total time:" + str(t))
+        return image_path
 	
 if __name__ == "__main__":
     cam = Camera()

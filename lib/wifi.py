@@ -6,7 +6,7 @@ class WifiConnector:
     def __init__(self, ssid, password):
         self.ssid = ssid
         self.password = password
-        self.hostname = None
+        self.hostname = "ESP32"
         self.sta_if = network.WLAN(network.STA_IF)
     
     def connect(self):
@@ -35,7 +35,8 @@ class WifiConnector:
             print("\nGiving up! Not connected!")
         else:
             print("\nNow connected with IP:", self.sta_if.ifconfig()[0])
+            return self.sta_if.ifconfig()[0]
 
 if __name__ == "__main__":
-     wifi = WifiConnector("ITLab", "MaaGodt*7913", "My ProS3")
+     wifi = WifiConnector("ITLab", "MaaGodt*7913")
      wifi.connect()
