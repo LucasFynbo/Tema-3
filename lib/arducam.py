@@ -1,11 +1,21 @@
 from machine import Pin, SPI, Timer
 from time import sleep_ms, ticks_ms, ticks_diff
 import os
+import json
 
 # modified version of the driver from https://github.com/CoreElectronics/CE-Arducam-MicroPython
 
 
 class Camera:
+
+# User callable functions
+## Main functions
+## Setting functions
+# Internal functions
+## High level internal functions
+## Low level
+
+##################### Callable FUNCTIONS #####################
 
 ########### CORE PHOTO FUNCTIONS ###########
     def __init__(self, skip_sleep=False, debug_information=False):
@@ -468,8 +478,9 @@ class Camera:
         t += ticks_ms()-t1
         print("Total time:" + str(t))
         return image_path
-	
+    
 if __name__ == "__main__":
     cam = Camera()
     print("Finished cam")
     cam.capture_images()
+
