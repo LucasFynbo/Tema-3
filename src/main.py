@@ -15,6 +15,8 @@ class VerticalFarming:
         self.FileSend = ImgFileSender("192.168.99.145", 8000)
         self.pump = Pump()
         #self.wifi = WifiConnector("ITLAB", "MaaGoddt*7913")
+        self.np.off()
+        self.led_on = 0
     
     def sendImages(self):
         self.imgFileSender = ImgFileSender() 
@@ -30,12 +32,17 @@ class VerticalFarming:
             currentTime = time.time() # Gets current time
             nextcaptureTime = currentTime + interval # Calculates time until next capture
             remainTime = nextcaptureTime - time.time() # Calculates the remaining time until next capture
-            if remainTime > 0: #sleep for the remaining time
+            if remainTime > 0: #sleep for the remaining time                    
                 time.sleep(remainTime)
-                self.cam.capture_images()
+                if self.led_on:
+                    self.cam.capture_images()
+                else:
+                    self.np.on()
+                    self.cam.capture_images()
+                    self.np.off()
                 print("took picture")
             else:
-                time.sleep(1) # if remaining time == negative, sleep for short time.
+                time.sleep(1)
 
     def on_pump_if_dry(self, interval):
         while True:
@@ -61,7 +68,6 @@ class VerticalFarming:
 if __name__ == "__main__":
     vf = VerticalFarming()
     #vf.wifiConnection()
-    vf.schedule_capture(60*60*4)
-    vf.light_thread(60*60*8)
-    vf.pump_thread(60*10)
-    
+    vf.schedule_capture(10)
+    #vf.light_thread(30)
+    #vf.pump_thread(60*10)
