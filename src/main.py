@@ -1,9 +1,14 @@
+# This file is executed on every boot (including wake-boot from deepsleep)
+import esp
+esp.osdebug(None)
+#import webrepl
+#webrepl.start()
 from Tema_3.lib.arducam import Camera          # Arducam driver
 from Tema_3.lib.soilsensor import SoilSensor   # SoilSensor driver
 from Tema_3.lib.ringlight import NeoPx         # NeoPixel module
 from Tema_3.lib.sendimg import ImgFileSender   # Arducam send image module
 from Tema_3.lib.pump import Pump               # driver for pump
-from Tema_3.lib.wifi import WifiConnector      # Wifi Connector
+import Tema_3.lib.wifi as wifi					   # Wifi Connector
 import _thread                                 # Threading module
 import time
 
@@ -12,10 +17,9 @@ class VerticalFarming:
         self.cam = Camera()
         self.np = NeoPx()
         self.soilsensor = SoilSensor()
-        self.FileSend = ImgFileSender("192.168.99.145", 8000)
+        self.FileSend = ImgFileSender("79.171.148.163", 8000)
+        ESP_IP = wifi.connect("ITLab", "MaaGodt*7913")
         self.pump = Pump()
-
-        print(f"IP: {WifiConnector("ITLAB", "MaaGodt*7913")}")
 
         self.np.off()
         self.led_on = 0
@@ -37,6 +41,7 @@ class VerticalFarming:
                     image_path = self.cam.capture_images()
                     self.np.off()
                 print("took picture")
+                print(str(image_path))
                 self.FileSend.send(image_path)
             else:
                 time.sleep(1)
@@ -58,13 +63,13 @@ class VerticalFarming:
         while True:
             hum = self.soilsensor.get_hum()
             print(f"Soil moisture: {hum}")
-            if hum < 750:
+            if hum < 600:
                 self.pump.on()
             time.sleep(interval)
 
 if __name__ == "__main__":
     vf = VerticalFarming()
-    #vf.wifiConnection()
-    vf.schedule_capture(10)
-    #vf.light_thread(30)
-    #vf.pump_thread(60*10)
+    vf.schedule_capture(60*60*1)
+    vf.light_thread(60*60*8)
+    vf.pump_thread(60*60)
+

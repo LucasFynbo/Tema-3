@@ -9,10 +9,13 @@ class file_recv():
         self.counter = 1
 
     def recv_file(self, conn):
-        conn.recv(75) # For at undgå at HTTP headers bliver en del af billedet, skipper vi de første 75 recieved bits
         file_data = b''
         while True: 
-            chunk = conn.recv(4096)
+            try:
+                chunk = conn.recv(4096)
+            except ConnectionResetError as e:
+                print(f"Connection reset by peer: {e}")
+                break
 
             if not chunk:
                 break
@@ -23,7 +26,9 @@ class file_recv():
         self.counter += 1
 
         with open(os.path.join(self.upload_directory, filename), 'wb') as f:
-            f.write(file_data)
+            f.write(file_data.split(b'\r\n')[4].strip())
+
+        conn.close()
 
     def start(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -38,14 +43,12 @@ class file_recv():
                     print(f"connected by {addr}")
                     self.recv_file(conn)
                     print("fil modtaget {filename}")
+    
 
-def main():
-    host = '172.20.10.2'
+if __name__=="__main__":
+    host = '0.0.0.0'
     port = 8000
-    upload_directory = r'C:\script\images'
+    upload_directory = r'C:\Users\Administrator\Desktop\images'
 
     receiver = file_recv(host, port, upload_directory)
     receiver.start()
-
-if __name__=="__main__":
-    main()
