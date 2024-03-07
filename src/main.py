@@ -1,8 +1,3 @@
-# This file is executed on every boot (including wake-boot from deepsleep)
-import esp
-esp.osdebug(None)
-#import webrepl
-#webrepl.start()
 from Tema_3.lib.arducam import Camera          # Arducam driver
 from Tema_3.lib.soilsensor import SoilSensor   # SoilSensor driver
 from Tema_3.lib.ringlight import NeoPx         # NeoPixel module
@@ -18,7 +13,7 @@ class VerticalFarming:
         self.np = NeoPx()
         self.soilsensor = SoilSensor()
         self.FileSend = ImgFileSender("79.171.148.163", 8000)
-        ESP_IP = wifi.connect("ITLab", "MaaGodt*7913")
+        wifi.connect("ITLab", "MaaGodt*7913")
         self.pump = Pump()
 
         self.np.off()
@@ -72,4 +67,3 @@ if __name__ == "__main__":
     vf.schedule_capture(60*60*1)
     vf.light_thread(60*60*8)
     vf.pump_thread(60*60)
-
