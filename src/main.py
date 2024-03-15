@@ -6,15 +6,16 @@ from Tema_3.lib.pump import Pump               # driver for pump
 import Tema_3.lib.wifi as wifi					   # Wifi Connector
 import _thread                                 # Threading module
 import time
+import uos
 
 class VerticalFarming:
     def __init__(self):
         self.cam = Camera()
         self.np = NeoPx()
         self.soilsensor = SoilSensor()
-        self.FileSend = ImgFileSender("79.171.148.163", 8000)
-        wifi.connect("ITLab", "MaaGodt*7913")
         self.pump = Pump()
+        self.FileSend = ImgFileSender("79.171.148.163", 13371)
+        wifi.connect("ITLab", "MaaGodt*7913")
 
         self.np.off()
         self.led_on = 0
@@ -38,6 +39,8 @@ class VerticalFarming:
                 print("took picture")
                 print(str(image_path))
                 self.FileSend.send(image_path)
+                
+                uos.remove(image_path)
             else:
                 time.sleep(1)
             
@@ -61,9 +64,11 @@ class VerticalFarming:
             if hum < 600:
                 self.pump.on()
             time.sleep(interval)
-
+      
+'''
 if __name__ == "__main__":
     vf = VerticalFarming()
-    vf.schedule_capture(60*60*1)
+    vf.schedule_capture(10)
     vf.light_thread(60*60*8)
     vf.pump_thread(60*60)
+'''

@@ -34,11 +34,18 @@ def connect(ssid, password):
 class ImgFileSender:
     def __init__(self, serverIP, serverPort):
         self.serverAddress = (serverIP, serverPort)
-        # self.serverAddress = f"{serverIP}:{serverPort}"
 
-    def send(self, filePath):
+    def connect(self):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
+            self.s.connect(self.serverAddress)
+            print("Connected to server")
+        except Exception as e:
+            print("Error connecting to server:", e)
+
+    def send(self, filePath):
+        try:
+            self.connect()
             image = filePath
             with open(image, 'rb') as f:
                 jpgData = f.read()
@@ -51,26 +58,27 @@ class ImgFileSender:
                 b"Content-Length: " + str(len(jpgData)).encode('utf-8') + b"\r\n" + 
                 b"\r\n"
             )
-            print("Request length:",len(request))
-            self.s.connect(self.serverAddress)
 
-            # Send the HTTP POST request
             self.s.sendall(request)
             self.s.send(jpgData)
 
-            # Close the socket
-            self.s.close()
             print("Image sent successfully!")
+
+            self.s.close()
+
         except Exception as e:
             print("Error sending image:", e)
-
 
 if __name__ == "__main__":
     filePath = '/images/image1.jpg'
     serverIP = '79.171.148.163'
-    serverPort = 8000
+    serverPort = 13371
 
-    connect("AP1830","19QwertL")
+    connect("ITLab","MaaGodt*7913")
 
     jpgSender = ImgFileSender(serverIP, serverPort)
-    jpgSender.send(filePath)
+
+    while True:
+        jpgSender.send(filePath)
+        time.sleep(10)
+
